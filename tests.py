@@ -11,7 +11,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 parameters = {
-    "episodes": 1500,
+    "episodes": 600,
     "max_steps": 1000,
     "epsilon": 1,
     "epsilon_decay": 0.99,
@@ -23,7 +23,7 @@ parameters = {
     "tau": 0.001,
     "buffer_size": 100_000,
     "batch_size": 64,
-    "reward_target_mean": 250
+    "reward_target_mean": 2000
 }
 
 Transition = namedtuple('Transition',
