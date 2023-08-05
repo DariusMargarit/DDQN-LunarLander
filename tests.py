@@ -1,8 +1,8 @@
 import gymnasium as gym
 import random
 import numpy as np
-import matplotlib.pyplot as plt
 
+from utils.plots import *
 from collections import namedtuple, deque
 
 import torch
@@ -23,7 +23,8 @@ parameters = {
     "tau": 0.001,
     "buffer_size": 100_000,
     "batch_size": 64,
-    "reward_target_mean": 2000
+    "reward_target_mean": 2000,
+    "render": False
 }
 
 Transition = namedtuple('Transition',
@@ -76,7 +77,10 @@ class DQN(nn.Module):
 class Agent():
 
     def __init__(self, env_name):
-        self.env = gym.make(env_name, render_mode="human")
+        if parameters["render"]:
+            self.env = gym.make(env_name, render_mode="human")
+        else:
+            self.env = gym.make(env_name)
         random.seed(parameters["seed"])
         state_size = self.env.observation_space.shape[0]
         action_size = self.env.action_space.n
@@ -146,13 +150,21 @@ class Agent():
 
     def train(self):
         reward_history = []
+        steps_per_episode = []
+        epsilons = []
+        fuel_consumption = []
         rolling_reward_history = deque(maxlen=100)
         epsilon = parameters["epsilon"]
         for i_episode in range(parameters["episodes"]):
             state = self.env.reset()[0]
-            reward = 0
+            reward, fuel = 0, 0
+            steps = parameters["max_steps"]
             for t in range(parameters["max_steps"]):
                 action = self.act(state, epsilon)
+                if action == 2:
+                    fuel += 1
+                elif action != 0:
+                    fuel += 0.1
                 next_state, r, done, _, _ = self.env.step(action)
                 self.memory.save(state, action, next_state, r, done)
 
@@ -164,9 +176,14 @@ class Agent():
                 state = next_state
                 reward += r
                 if done:
+                    steps = t
                     break
+
             reward_history.append(reward)
+            steps_per_episode.append(steps)
             rolling_reward_history.append(reward)
+            epsilons.append(epsilon)
+            fuel_consumption.append(fuel)
             epsilon = max(parameters["epsilon_decay"] * epsilon, parameters["epsilon_min"])
 
             print('\rEpisode {}\tAverage Reward: {:.2f}'.format(
@@ -181,42 +198,60 @@ class Agent():
                 torch.save(self.policy_net.state_dict(), 'model.pth')
                 break
 
-        with plt.style.context('seaborn-white'):
-            plt.plot(np.arange(len(reward_history)), reward_history)
-            plt.xlabel('Episode')
-            plt.ylabel('Reward')
-            plt.savefig('dqn-agent-reward.png',
-                        bbox_inches='tight')
-            plt.gcf().clear()
+        with open("data/rewards.txt", "w") as f:
+            for elem in reward_history:
+                f.write(str(elem) + '\n')
+        with open("data/epsilons.txt", "w") as f:
+            for elem in epsilons:
+                f.write(str(elem) + '\n')
+        with open("data/steps_per_episode.txt", "w") as f:
+            for elem in steps_per_episode:
+                f.write(str(elem) + '\n')
+        with open("data/fuel_consumption.txt", "w") as f:
+            for elem in fuel_consumption:
+                f.write(str(elem) + '\n')
 
     def test(self):
         self.policy_net.load_state_dict(torch.load(
             'data/model.pth', map_location=lambda storage, loc: storage))
 
         test_scores = []
-        for j in range(5):
+        steps_per_episode = []
+        fuel_consumption = []
+        for j in range(100):
             state = self.env.reset()[0]
-            reward = 0
-            for k in range(500):
+            reward, fuel = 0, 0
+            steps = parameters["max_steps"]
+            for k in range(parameters["max_steps"]):
                 action = self.act(state, epsilon=0)
+                if action == 2:
+                    fuel += 1
+                elif action != 0:
+                    fuel += 0.1
                 state, r, done, _, _ = self.env.step(action)
                 reward += r
                 if done:
-                    print('Episode {}: {}'.format(j + 1, reward))
-                    test_scores.append(reward)
+                    steps = k
                     break
+
+            print('Episode {}: {}'.format(j + 1, reward))
+            test_scores.append(reward)
+            steps_per_episode.append(steps)
+            fuel_consumption.append(fuel)
 
         avg_score = sum(test_scores) / len(test_scores)
 
         print('\rAverage reward: {:.2f}'.format(avg_score))
 
-        with plt.style.context('seaborn-white'):
-            plt.plot(np.arange(len(test_scores)), test_scores)
-            plt.xlabel('Episode')
-            plt.ylabel('Reward')
-            plt.savefig('dqn-agent-reward-test.png',
-                        bbox_inches='tight')
-            plt.gcf().clear()
+        with open("eval_data/rewards.txt", "w") as f:
+            for elem in test_scores:
+                f.write(str(elem) + '\n')
+        with open("eval_data/steps_per_episode.txt", "w") as f:
+            for elem in steps_per_episode:
+                f.write(str(elem) + '\n')
+        with open("eval_data/fuel_consumption.txt", "w") as f:
+            for elem in fuel_consumption:
+                f.write(str(elem) + '\n')
 
 
 if __name__ == '__main__':
