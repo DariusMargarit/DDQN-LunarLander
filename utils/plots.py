@@ -53,7 +53,7 @@ def plot_data():
     with open("data/epsilons.txt", "r") as f:
         lines = f.readlines()
         epsilons = [float(line.strip()) for line in lines]
-        plot_epsilon(epsilons, "data/rewards.png")
+        plot_epsilon(epsilons, "data/epsilons.png")
 
     with open("data/steps_per_episode.txt", "r") as f:
         lines = f.readlines()

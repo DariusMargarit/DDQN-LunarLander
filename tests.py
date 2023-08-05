@@ -24,7 +24,7 @@ parameters = {
     "buffer_size": 100_000,
     "batch_size": 64,
     "reward_target_mean": 2000,
-    "render": False
+    "render": True
 }
 
 Transition = namedtuple('Transition',
@@ -218,7 +218,7 @@ class Agent():
         test_scores = []
         steps_per_episode = []
         fuel_consumption = []
-        for j in range(100):
+        for j in range(5):
             state = self.env.reset()[0]
             reward, fuel = 0, 0
             steps = parameters["max_steps"]
@@ -243,20 +243,21 @@ class Agent():
 
         print('\rAverage reward: {:.2f}'.format(avg_score))
 
-        with open("eval_data/rewards.txt", "w") as f:
-            for elem in test_scores:
-                f.write(str(elem) + '\n')
-        with open("eval_data/steps_per_episode.txt", "w") as f:
-            for elem in steps_per_episode:
-                f.write(str(elem) + '\n')
-        with open("eval_data/fuel_consumption.txt", "w") as f:
-            for elem in fuel_consumption:
-                f.write(str(elem) + '\n')
+        if not parameters["render"]:
+            with open("eval_data/rewards.txt", "w") as f:
+                for elem in test_scores:
+                    f.write(str(elem) + '\n')
+            with open("eval_data/steps_per_episode.txt", "w") as f:
+                for elem in steps_per_episode:
+                    f.write(str(elem) + '\n')
+            with open("eval_data/fuel_consumption.txt", "w") as f:
+                for elem in fuel_consumption:
+                    f.write(str(elem) + '\n')
 
 
 if __name__ == '__main__':
     agent = Agent('RewardCustomLunarLander')
     # agent.train()
     # plot_data()
-    # agent.test()
+    agent.test()
     # plot_eval_data()
