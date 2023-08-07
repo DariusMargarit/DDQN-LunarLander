@@ -266,7 +266,7 @@ class Agent():
 
 
 if __name__ == '__main__':
-    agent = Agent('CustomLunarLander')
+    agent = Agent('RewardCustomLunarLander')
     # agent.train()
     plot_data()
     # agent.test()
