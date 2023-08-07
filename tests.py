@@ -213,12 +213,12 @@ class Agent():
 
     def test(self):
         self.policy_net.load_state_dict(torch.load(
-            'data/model.pth', map_location=lambda storage, loc: storage))
+            'test_data/model.pth', map_location=lambda storage, loc: storage))
 
         test_scores = []
         steps_per_episode = []
         fuel_consumption = []
-        for j in range(5):
+        for j in range(10):
             state = self.env.reset()[0]
             reward, fuel = 0, 0
             steps = parameters["max_steps"]
@@ -256,7 +256,7 @@ class Agent():
 
 
 if __name__ == '__main__':
-    agent = Agent('RewardCustomLunarLander')
+    agent = Agent('CustomLunarLander')
     # agent.train()
     # plot_data()
     agent.test()
