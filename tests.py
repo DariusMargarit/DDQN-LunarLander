@@ -1,9 +1,11 @@
 import gymnasium as gym
 import random
 import numpy as np
+import time
 
 from utils.plots import *
 from collections import namedtuple, deque
+from gymnasium.experimental.wrappers import RecordVideoV0
 
 import torch
 import torch.nn as nn
@@ -24,7 +26,8 @@ parameters = {
     "buffer_size": 100_000,
     "batch_size": 64,
     "reward_target_mean": 2000,
-    "render": True
+    "render": True,
+    "record": True      # render must be true as well
 }
 
 Transition = namedtuple('Transition',
@@ -78,7 +81,11 @@ class Agent():
 
     def __init__(self, env_name):
         if parameters["render"]:
-            self.env = gym.make(env_name, render_mode="human")
+            if parameters["record"]:
+                self.env = gym.make(env_name, render_mode="rgb_array")
+                self.env = RecordVideoV0(self.env, video_folder="eval_data/video")
+            else:
+                self.env = gym.make(env_name, render_mode="human")
         else:
             self.env = gym.make(env_name)
         random.seed(parameters["seed"])
@@ -218,7 +225,7 @@ class Agent():
         test_scores = []
         steps_per_episode = []
         fuel_consumption = []
-        for j in range(10):
+        for j in range(1):
             state = self.env.reset()[0]
             reward, fuel = 0, 0
             steps = parameters["max_steps"]
@@ -238,6 +245,7 @@ class Agent():
             test_scores.append(reward)
             steps_per_episode.append(steps)
             fuel_consumption.append(fuel)
+            time.sleep(0.5)
 
         avg_score = sum(test_scores) / len(test_scores)
 
@@ -254,10 +262,12 @@ class Agent():
                 for elem in fuel_consumption:
                     f.write(str(elem) + '\n')
 
+        self.env.close()
+
 
 if __name__ == '__main__':
     agent = Agent('CustomLunarLander')
     # agent.train()
-    # plot_data()
-    agent.test()
+    plot_data()
+    # agent.test()
     # plot_eval_data()
