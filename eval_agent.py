@@ -1,6 +1,6 @@
 from utils.plots import *
 import gymnasium as gym
-from utils.DQNAgent import DoubleQAgent
+from utils.DDQNAgent import DoubleQAgent
 
 
 env = gym.make("LunarLander-v2")
