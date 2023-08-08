@@ -3,6 +3,6 @@ from utils.DDQNAgent import Agent
 
 agent = Agent('RewardCustomLunarLander')
 # agent.train()
-# plot_data()
+# plot_data("data")
 agent.test()
-# plot_eval_data()
+# plot_data("eval_data")

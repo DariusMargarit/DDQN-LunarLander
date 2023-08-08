@@ -6,7 +6,7 @@ import time
 from collections import deque
 from gymnasium.experimental.wrappers import RecordVideoV0
 from utils.NN import DQN
-from utils.ReplayMemory import ReplayMemory
+from utils.ReplayMemory import ReplayMemory, Transition
 from utils.parameters import parameters
 
 import torch

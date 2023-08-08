@@ -32,7 +32,7 @@ for i in range(300):
     fuel_consumption.append(fuel)
     print(f"Episode {i}, reward: {score}, eps: {agent.epsilon}")
 
-with open("eval_data/rewards.txt", "w") as f:
+with open("eval_data/reward_plots/rewards.txt", "w") as f:
     for elem in rewards:
         f.write(str(elem) + '\n')
 
@@ -46,10 +46,10 @@ with open("eval_data/fuel_consumption.txt", "w") as f:
 
 
 
-with open("eval_data/rewards.txt", "r") as f:
+with open("eval_data/reward_plots/rewards.txt", "r") as f:
     lines = f.readlines()
     rewards = [float(line.strip()) for line in lines]
-    plot_rewards(rewards, "eval_data/rewards.png")
+    plot_rewards(rewards, "eval_data/reward_plots/rewards.png")
 
 with open("eval_data/steps_per_episode.txt", "r") as f:
     lines = f.readlines()

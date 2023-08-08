@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 
 def moving_average(data, window):
@@ -44,40 +45,51 @@ def plot_fuel_consumption(values, path):
     plt.savefig(path)
 
 
-def plot_data():
-    with open("data/rewards.txt", "r") as f:
-        lines = f.readlines()
-        rewards = [float(line.strip()) for line in lines]
-        plot_rewards(rewards, "data/rewards.png")
+def plot_data(path):
+    """
+    Give a directory path.
+    """
+    if os.path.isfile(path + "/rewards.txt"):
+        with open(path + "/rewards.txt", "r") as f:
+            lines = f.readlines()
+            rewards = [float(line.strip()) for line in lines]
+            plot_rewards(rewards, path + "/rewards.png")
 
-    with open("data/epsilons.txt", "r") as f:
-        lines = f.readlines()
-        epsilons = [float(line.strip()) for line in lines]
-        plot_epsilon(epsilons, "data/epsilons.png")
+    if os.path.isfile(path + "/epsilons.txt"):
+        with open(path + "/epsilons.txt", "r") as f:
+            lines = f.readlines()
+            epsilons = [float(line.strip()) for line in lines]
+            plot_epsilon(epsilons, path + "/epsilons.png")
 
-    with open("data/steps_per_episode.txt", "r") as f:
-        lines = f.readlines()
-        steps_per_episode = [float(line.strip()) for line in lines]
-        plot_steps_per_episode(steps_per_episode, "data/steps_per_episode.png")
+    if os.path.isfile(path + "/steps_per_episode.txt"):
+        with open(path + "/steps_per_episode.txt", "r") as f:
+            lines = f.readlines()
+            steps_per_episode = [float(line.strip()) for line in lines]
+            plot_steps_per_episode(steps_per_episode, path + "/steps_per_episode.png")
 
-    with open("data/fuel_consumption.txt", "r") as f:
-        lines = f.readlines()
-        fuel_consumption = [float(line.strip()) for line in lines]
-        plot_fuel_consumption(fuel_consumption, "data/fuel_consumption.png")
+    if os.path.isfile(path + "/fuel_consumption.txt"):
+        with open(path + "/fuel_consumption.txt", "r") as f:
+            lines = f.readlines()
+            fuel_consumption = [float(line.strip()) for line in lines]
+            plot_fuel_consumption(fuel_consumption, path + "/fuel_consumption.png")
 
 
-def plot_eval_data():
-    with open("eval_data/rewards.txt", "r") as f:
+def plot_accuracy(path):
+    """
+    Give a .txt path.
+    """
+    with open(path, "r") as f:
         lines = f.readlines()
-        rewards = [float(line.strip()) for line in lines]
-        plot_rewards(rewards, "eval_data/rewards.png")
-
-    with open("eval_data/steps_per_episode.txt", "r") as f:
-        lines = f.readlines()
-        steps_per_episode = [float(line.strip()) for line in lines]
-        plot_steps_per_episode(steps_per_episode, "eval_data/steps_per_episode.png")
-
-    with open("eval_data/fuel_consumption.txt", "r") as f:
-        lines = f.readlines()
-        fuel_consumption = [float(line.strip()) for line in lines]
-        plot_fuel_consumption(fuel_consumption, "eval_data/fuel_consumption.png")
+        landings = 0
+        crashes = 0
+        for line in lines:
+            reward = float(line.strip())
+            if reward < -500:
+                crashes += 1
+            else:
+                landings += 1
+        labels = "Landing\n" + str(landings * 100 / (landings + crashes)) + "%", \
+            "Crash\n" + str(crashes * 100 / (landings + crashes)) + "%"
+        sizes = [int(landings), int(crashes)]
+        plt.pie(sizes, labels=labels)
+        plt.savefig(path[:-3] + "png")
