@@ -162,7 +162,7 @@ class Agent:
         test_scores = []
         steps_per_episode = []
         fuel_consumption = []
-        for j in range(5):
+        for j in range(10):
             state = self.env.reset()[0]
             reward, fuel = 0, 0
             steps = parameters["max_steps"]
