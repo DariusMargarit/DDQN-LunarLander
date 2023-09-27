@@ -155,14 +155,14 @@ class Agent:
             for elem in fuel_consumption:
                 f.write(str(elem) + '\n')
 
-    def test(self):
+    def test(self, episodes=10):
         self.policy_net.load_state_dict(torch.load(
             'data/model.pth', map_location=lambda storage, loc: storage))
 
         test_scores = []
         steps_per_episode = []
         fuel_consumption = []
-        for j in range(10):
+        for j in range(episodes):
             state = self.env.reset()[0]
             reward, fuel = 0, 0
             steps = parameters["max_steps"]

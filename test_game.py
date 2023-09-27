@@ -1,8 +1,7 @@
 from utils.plots import *
 from utils.DDQNAgent import Agent
 
+episodes = 10
+
 agent = Agent('RewardCustomLunarLander')
-# agent.train()
-# plot_data("data")
-agent.test()
-# plot_data("eval_data")
+agent.test(episodes)
