@@ -17,7 +17,9 @@
 Optional: change the number of episodes in the file
 
 ### Random actions
-https://github.com/DariusMargarit/DDQN-LunarLander/assets/69694441/80426334-950b-4add-af49-8c215327e079
+
+[![Random](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fyoutu.be%2F-oZ9Lo8PhiQ)](https://youtu.be/-oZ9Lo8PhiQ)
 
 ### Actions during training
-https://github.com/DariusMargarit/DDQN-LunarLander/assets/69694441/57885b91-b12e-4635-ae2b-9f62b472eea4
+
+[![Training](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fyoutu.be%2FF-rG0oBErw4)](https://youtu.be/F-rG0oBErw4)
